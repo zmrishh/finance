@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
@@ -115,16 +115,31 @@ const navigationSections: NavSection[] = [
 ]
 
 function NavItemComponent({ item, level = 0 }: { item: NavItem; level?: number }) {
-  const [isOpen, setIsOpen] = useState(false)
   const pathname = usePathname()
   const hasSubItems = item.subItems && item.subItems.length > 0
   const isActive = pathname === item.href
+  const hasActiveSubItem = hasSubItems && item.subItems?.some((subItem) => pathname === subItem.href)
+  const [isOpen, setIsOpen] = useState(hasActiveSubItem || false)
+
+  // Auto-expand if has active sub-item
+  useEffect(() => {
+    if (hasActiveSubItem) {
+      setIsOpen(true)
+    }
+  }, [hasActiveSubItem])
 
   if (hasSubItems) {
     return (
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <CollapsibleTrigger asChild>
-          <Button variant="ghost" className={cn("w-full justify-start h-9 px-3", level > 0 && "ml-4")}>
+          <Button
+            variant="ghost"
+            className={cn(
+              "w-full justify-start h-9 px-3 hover:bg-orange-100 hover:text-orange-900",
+              level > 0 && "ml-4",
+              (isActive || hasActiveSubItem) && "bg-orange-100 text-orange-900 font-medium",
+            )}
+          >
             <item.icon className="mr-2 h-4 w-4" />
             <span className="flex-1 text-left">{item.title}</span>
             {isOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
