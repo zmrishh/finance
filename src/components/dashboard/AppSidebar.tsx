@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { Link, useLocation } from "react-router-dom"
 import {
   LayoutDashboard,
   Plus,
@@ -114,7 +115,9 @@ const navigationSections: NavSection[] = [
 
 function NavItemComponent({ item, level = 0 }: { item: NavItem; level?: number }) {
   const [isOpen, setIsOpen] = useState(false)
+  const location = useLocation()
   const hasSubItems = item.subItems && item.subItems.length > 0
+  const isActive = location.pathname === item.href
 
   if (hasSubItems) {
     return (
@@ -138,13 +141,17 @@ function NavItemComponent({ item, level = 0 }: { item: NavItem; level?: number }
   return (
     <Button
       variant="ghost"
-      className={cn("w-full justify-start h-9 px-3 hover:bg-orange-100 hover:text-orange-900", level > 0 && "ml-4")}
+      className={cn(
+        "w-full justify-start h-9 px-3 hover:bg-orange-100 hover:text-orange-900",
+        level > 0 && "ml-4",
+        isActive && "bg-orange-100 text-orange-900 font-medium",
+      )}
       asChild
     >
-      <a href={item.href}>
+      <Link to={item.href}>
         <item.icon className="mr-2 h-4 w-4" />
         {item.title}
-      </a>
+      </Link>
     </Button>
   )
 }
@@ -154,19 +161,21 @@ export function AppSidebar() {
     <div className="flex flex-col h-full bg-white border-r border-gray-200">
       {/* Logo */}
       <div className="p-6 border-b border-gray-200">
-        <div className="flex items-center space-x-2">
+        <Link to="/dashboard" className="flex items-center space-x-2">
           <div className="w-8 h-8 bg-[#FF8C00] rounded-lg flex items-center justify-center">
             <Calculator className="h-5 w-5 text-white" />
           </div>
           <span className="text-xl font-bold">Kenesis</span>
-        </div>
+        </Link>
       </div>
 
       {/* Quick Create Button */}
       <div className="p-4">
-        <Button className="w-full bg-[#FF8C00] hover:bg-[#FF7700] text-white">
-          <Plus className="mr-2 h-4 w-4" />
-          Quick Create
+        <Button className="w-full bg-[#FF8C00] hover:bg-[#FF7700] text-white" asChild>
+          <Link to="/transactions/new">
+            <Plus className="mr-2 h-4 w-4" />
+            Quick Create
+          </Link>
         </Button>
       </div>
 
