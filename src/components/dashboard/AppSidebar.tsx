@@ -1,7 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { Link, useLocation } from "react-router-dom"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
 import {
   LayoutDashboard,
   Plus,
@@ -115,9 +116,9 @@ const navigationSections: NavSection[] = [
 
 function NavItemComponent({ item, level = 0 }: { item: NavItem; level?: number }) {
   const [isOpen, setIsOpen] = useState(false)
-  const location = useLocation()
+  const pathname = usePathname()
   const hasSubItems = item.subItems && item.subItems.length > 0
-  const isActive = location.pathname === item.href
+  const isActive = pathname === item.href
 
   if (hasSubItems) {
     return (
@@ -148,7 +149,7 @@ function NavItemComponent({ item, level = 0 }: { item: NavItem; level?: number }
       )}
       asChild
     >
-      <Link to={item.href}>
+      <Link href={item.href}>
         <item.icon className="mr-2 h-4 w-4" />
         {item.title}
       </Link>
@@ -161,7 +162,7 @@ export function AppSidebar() {
     <div className="flex flex-col h-full bg-white border-r border-gray-200">
       {/* Logo */}
       <div className="p-6 border-b border-gray-200">
-        <Link to="/dashboard" className="flex items-center space-x-2">
+        <Link href="/dashboard" className="flex items-center space-x-2">
           <div className="w-8 h-8 bg-[#FF8C00] rounded-lg flex items-center justify-center">
             <Calculator className="h-5 w-5 text-white" />
           </div>
@@ -172,7 +173,7 @@ export function AppSidebar() {
       {/* Quick Create Button */}
       <div className="p-4">
         <Button className="w-full bg-[#FF8C00] hover:bg-[#FF7700] text-white" asChild>
-          <Link to="/transactions/new">
+          <Link href="/transactions/new">
             <Plus className="mr-2 h-4 w-4" />
             Quick Create
           </Link>
